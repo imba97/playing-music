@@ -1,3 +1,27 @@
+<style scoped>
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee span.overflow {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 10s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+</style>
+
 <template>
   <div ref="marquee" class="marquee" of-hidden>
     <span ref="text">
@@ -32,27 +56,3 @@ function checkOverflow() {
   }
 }
 </script>
-
-<style scoped>
-.marquee {
-  white-space: nowrap;
-  overflow: hidden;
-  position: relative;
-}
-
-.marquee span.overflow {
-  display: inline-block;
-  padding-left: 100%;
-  animation: marquee 10s linear infinite;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  100% {
-    transform: translate(-100%, 0);
-  }
-}
-</style>
