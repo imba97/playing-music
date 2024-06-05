@@ -1,17 +1,37 @@
+<style lang="scss" scoped>
+.music-text {
+  :deep() {
+    span {
+      @supports (-webkit-background-clip: text) or (background-clip: text) {
+        background: linear-gradient(90deg, #1062af 0%, #7828be 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    }
+  }
+}
+</style>
+
 <template>
   <div h-full w-full of-hidden>
     <div h-full w-full flex="~ col" items-center justify-center>
-      <div p-10 lt-md="w-[90%]" md="w-[60%]" flex="~ col" items-center justify-center gap-6 bg="[rgba(0,0,0,0.5)]"
-        rounded-10>
-        <div text="white lt-md:4 md:8">
+      <div p-10 lt-md="w-[90%]" md="w-[60%]" flex="~ col" items-center justify-center gap-2 rounded-10
+        :class="imageLoaded ? 'bg-[rgba(255,255,255,0.35)]' : 'bg-[rgba(0,0,0,0.35)]'">
+        <div text="gray-6 lt-md:6 md:8">
           {{ playing ? '我正在听' : '当前没在听歌，最近听了' }}
         </div>
-        <div lt-md="h-48 w-48" md="h-86 w-86" rounded-full of-hidden>
+        <div lt-md="h-48 w-48" md="h-86 w-86" my-4 rounded-full of-hidden>
           <img v-show="imageLoaded" :src="music.image" h-full w-full object-cover :class="playing ? 'animate-spin animate-duration-30000' : ''
-            " />
-          <div v-show="!imageLoaded" i-ph-music-note-simple-duotone bg-gray relative left-12 h="80%" w="80%"></div>
+          " />
+          <div v-show="!imageLoaded" i-ph-music-note-simple-duotone bg-gray-6 relative left-12 h="80%" w="80%"></div>
         </div>
-        <Text text="white center lt-md:6 md:12" w-full>{{ music.name }}</Text>
+        <Text :class="{
+          'music-text': imageLoaded
+        }" text="gray-6 center lt-md:8 md:12" w-full h="lt-md:12 md:22" font-bold>{{ music.name }}</Text>
+        <Text :class="{
+          'music-text': imageLoaded
+        }" text="gray-6 center lt-md:4 md:6" w-full h="lt-md:8 md:10">{{ music.artist }}</Text>
       </div>
     </div>
 
@@ -35,6 +55,7 @@ const imageLoaded = ref(false)
 
 const music = reactive({
   name: '加载中',
+  artist: '',
   image: ''
 })
 
@@ -57,6 +78,7 @@ const getMusic = async () => {
   playing.value = get(response.data, '@attr.nowplaying') === 'true'
 
   music.name = get(response.data, 'name')
+  music.artist = get(response.data, 'artist.#text')
 
   const findedImage = find(get(response.data, 'image'), { size: 'extralarge' })
 
