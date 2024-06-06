@@ -94,7 +94,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, nextTick, watch } from 'vue'
 
-import { get } from 'lodash'
+import { find, get } from 'lodash'
 import axios from 'axios'
 
 import { createRipples } from '@/utils/ripples'
@@ -136,12 +136,23 @@ const getMusic = async () => {
     return
   }
 
+  const name = get(response.data, 'name')
+  const artist = get(response.data, 'artist.#text')
+
+  if (!name || !artist) {
+    return
+  }
+
+  music.name = name
+  music.artist = artist
+
   playing.value = get(response.data, '@attr.nowplaying') === 'true'
 
-  music.name = get(response.data, 'name')
-  music.artist = get(response.data, 'artist.#text')
+  let imageUrl = get(response.data, 'albumCover', '')
 
-  const imageUrl = get(response.data, 'albumCover', '')
+  if (imageUrl === '') {
+    imageUrl = get(find(get(response.data, 'image'), { size: 'extralarge' }), '#text')
+  }
 
   if (imageUrl && imageUrl !== music.image) {
     const image = new Image()
@@ -150,6 +161,16 @@ const getMusic = async () => {
       imageLoaded.value = true
       stopRipples()
       music.image = imageUrl
+    }
+    image.onerror = () => {
+      imageLoaded.value = false
+
+      if (stopRipples) {
+        stopRipples()
+      }
+
+      stopRipples = createRipples('ripples')
+      music.image = ''
     }
   }
 }
