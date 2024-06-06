@@ -26,10 +26,10 @@
           " />
           <div v-show="!imageLoaded" i-ph-music-note-simple-duotone bg-gray-6 relative left-12 h="80%" w="80%"></div>
         </div>
-        <Text :class="{
+        <Text v-if="visibleText" :class="{
           'music-text': imageLoaded
         }" text="gray-6 center lt-md:8 md:12" w-full h="lt-md:12 md:22" font-bold>{{ music.name }}</Text>
-        <Text :class="{
+        <Text v-if="visibleText" :class="{
           'music-text': imageLoaded
         }" text="gray-6 center lt-md:4 md:6" w-full h="lt-md:8 md:10">{{ music.artist }}</Text>
       </div>
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, nextTick, watch } from 'vue';
 
 import { get, find } from 'lodash'
 import axios from 'axios'
@@ -53,10 +53,16 @@ import Text from '@/components/Text.vue'
 const playing = ref(false)
 const imageLoaded = ref(false)
 
+const visibleText = ref(true)
+
 const music = reactive({
   name: '加载中',
   artist: '',
   image: ''
+})
+
+watch(music, () => {
+  resetText()
 })
 
 onMounted(() => {
@@ -90,5 +96,12 @@ const getMusic = async () => {
       music.image = findedImage['#text']
     }
   }
+}
+
+const resetText = () => {
+  visibleText.value = false
+  nextTick(() => {
+    visibleText.value = true
+  })
 }
 </script>
