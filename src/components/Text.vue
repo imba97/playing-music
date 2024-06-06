@@ -31,14 +31,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
 
-const marquee = ref<HTMLDivElement | null>(null);
-const text = ref<HTMLSpanElement | null>(null);
+const marquee = ref<HTMLDivElement | null>(null)
+const text = ref<HTMLSpanElement | null>(null)
 
 onMounted(() => {
-  checkOverflow();
-});
+  checkOverflow()
+})
 
 const checkOverflow = () => {
   if (!text.value || !marquee.value) {
@@ -46,9 +46,9 @@ const checkOverflow = () => {
   }
 
   if (text.value.offsetWidth > marquee.value.offsetWidth) {
-    text.value.classList.add('overflow');
+    text.value.classList.add('overflow')
   } else {
-    text.value.classList.remove('overflow');
+    text.value.classList.remove('overflow')
   }
 }
 </script>

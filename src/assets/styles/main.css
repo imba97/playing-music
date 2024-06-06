@@ -1,3 +1,5 @@
-html, body, #app {
+html,
+body,
+#app {
   --uno: h-full w-full;
 }
