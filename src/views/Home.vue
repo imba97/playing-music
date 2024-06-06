@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, nextTick, watch } from 'vue';
 
-import { get, find } from 'lodash'
+import { get } from 'lodash'
 import axios from 'axios'
 
 import Text from '@/components/Text.vue'
@@ -86,14 +86,18 @@ const getMusic = async () => {
   music.name = get(response.data, 'name')
   music.artist = get(response.data, 'artist.#text')
 
-  const findedImage = find(get(response.data, 'image'), { size: 'extralarge' })
+  if (!playing.value) {
+    music.name = Array.from({ length: Math.floor(Math.random() * 10) + 10 }).map(() => String.fromCharCode(Math.floor(Math.random() * 26) + 97)).join('')
+  }
 
-  if (findedImage) {
+  const imageUrl = get(response.data, 'albumCover', '')
+
+  if (imageUrl && imageUrl !== music.image) {
     const image = new Image()
-    image.src = findedImage['#text']
+    image.src = imageUrl
     image.onload = () => {
       imageLoaded.value = true
-      music.image = findedImage['#text']
+      music.image = imageUrl
     }
   }
 }
